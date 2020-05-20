@@ -1,4 +1,5 @@
 # coding: utf-8
+#!/usr/bin/env python3
 # __author__ = 'Hoyin'
 # __date__ = '2020/05/02'
 # __Desc__ = 从数据库中导出数据到excel数据表中
@@ -6,11 +7,12 @@
 import csv
 import os
 import glob
-import  openpyxl
+import openpyxl
 import chardet
 import db
 from config import *
 from utils import *
+
 
 # 文件的根目录
 BASE_DIR, filename = os.path.split(os.path.abspath(__file__))
@@ -39,29 +41,38 @@ def readfile(filename):
 def export_to_excel(sql, outputpath):
     logging.info("export_to_excel")
     
-    results, fields_complex = db.get_data(sql)
-    #logging.info(results,fields_complex)
+    results, fields = db.get_data(sql)
+    #logging.info(results,fields)
 
     if not results:
         return False
 
     wb = openpyxl.Workbook()
-    ws = wb.worksheets[0]
-    
+    ws = wb.active
+
     # 写上字段信息
-    for i in range(len(fields_complex)):
-        ws.append(fields_complex[i][0])
+    # for field in range(0,len(fields)):
+    #     ws.append(fields[field][0])
+    
+    fields = [f[0] for f in fields]
 
-        
-    i = 1
-    for line in results:
-        for col in range(1, len(line) + 1):
-            ColNum = openpyxl.cell.cell.get_column_letter(col)
-            ws.cell('%s%s' % (ColNum, i)).value = line[col - 1]
-        i += 1
- 
+    # print(fields)
+    ws.append(fields)
 
-    ws.save(outputpath + '.xlsx')
+    for res in results:
+        ws.append(res)
+
+    wb.save(outputpath + '.xlsx')
+    return True
+
+    # 获取并写入数据段信息
+    row = 1
+    col = 0
+    for row in range(1,len(results)+1):
+        for col in range(0,len(fields)):
+            sheet.write(row,col,u'%s'%results[row-1][col])
+
+    workbook.save(outputpath + '.xls')
 
     return True
 
@@ -95,8 +106,6 @@ sql_files = glob.glob(BASE_DIR + '/sql/*.*')
 sql_files = [f.replace('\\', '/') for f in sql_files]
 # print(sql_files)
 
-passwd = gen_pass(6)
-
 for fp in sql_files:
 
     logging.info("开始解析:{}".format(fp))
@@ -120,8 +129,7 @@ for fp in sql_files:
         logging.error("生成文件:{}.{} 失败！".format(outputpath,postfix))
 
 
-print(passwd)
-logging.info("密码:{}".format(passwd))
+print(gen_pass())
 
     
 
