@@ -15,6 +15,7 @@ from utils import *
 from SendEmail import *
 
 
+
 # 文件的根目录
 BASE_DIR, filename = os.path.split(os.path.abspath(__file__))
 # print(__file__)
@@ -67,6 +68,7 @@ def export_to_excel(sql, outputpath):
 
     wb.save(outputpath + '.xlsx')
     return True
+
 
 def export_to_csv(sql, outputpath):
     if not db.get_data(sql):
