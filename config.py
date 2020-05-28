@@ -9,7 +9,7 @@ import logging
 logging.basicConfig(level=logging.INFO,format='%(asctime)s :: %(levelname)s :: %(message)s', filename='exports.log')
 
 # 数据库类型  oracle|mysql
-db_type = 'mysql'
+db_type = 'oracle'
 
 # 导出类型 excel csv
 export_type = 'excel'
@@ -17,7 +17,7 @@ export_type = 'excel'
 # mysql连接配置
 mysql_config = {
     'user': 'root',
-    'password': 'F98dbSfaWZC8rpz8',
+    'password': 'root',
     'host': '10.80.16.64',
 }
 
@@ -28,12 +28,12 @@ oracle_config = ''
 
 config_sjqx = {
     'host':'10.80.16.57',
-    'user': 'hoyin',
-    'password': 'fdsafdsa'
+    'user': 'root',
+    'password': 'root'
 }
 
 config_paas = {
     'host':'10.80.16.64',
     'user': 'root',
-    'password': 'F98dbSfaWZC8rpz8'
+    'password': 'root'
 }

@@ -12,6 +12,7 @@ import chardet
 import db
 from config import *
 from utils import *
+from SendEmail import *
 
 
 # 文件的根目录
@@ -20,6 +21,8 @@ BASE_DIR, filename = os.path.split(os.path.abspath(__file__))
 BASE_DIR = BASE_DIR.replace('\\', '/')
 
 # print(BASE_DIR)
+
+send_to_email = False
 
 def readfile(filename):
     try:
@@ -63,17 +66,6 @@ def export_to_excel(sql, outputpath):
         ws.append(res)
 
     wb.save(outputpath + '.xlsx')
-    return True
-
-    # 获取并写入数据段信息
-    row = 1
-    col = 0
-    for row in range(1,len(results)+1):
-        for col in range(0,len(fields)):
-            sheet.write(row,col,u'%s'%results[row-1][col])
-
-    workbook.save(outputpath + '.xls')
-
     return True
 
 def export_to_csv(sql, outputpath):
@@ -131,7 +123,52 @@ for fp in sql_files:
 
 print(gen_pass())
 
+# 发送邮件
+def sendmail(subject, attachs, receivers):
+    # 邮件内容存放路径 
+    content_path = BASE_DIR + '/mail.txt'
     
+    # 传递邮件发送参数
+    argvs = {
+        'smtp_server': '10.83.1.19',
+        'port': 25,
+        'user': 'operation@xdjk.com',
+        'passwd': 'xdjk2019',
+        'ssl': False,
+        'sender': 'operation@xdjk.com',
+        'receivers': receivers,
+        'subject': subject,
+        'content_path': content_path,
+        'attach_files': attachs,
+        'attach_title': ''
+    }
+    # 发送邮件
+    sendemail = SendEmail(**argvs)
+    sendemail.send()
+    
+
+
+if send_to_email: 
+    # 邮件主题日期
+    nowDate = datetime.datetime.now().strftime('%Y-%m-%d') 
+    subject = '[' + nowDate + ']' + '新增非标商户数据'
+    # 附件路径
+    attachs = glob.glob(BASE_DIR + '/exports/*.xlsx')
+
+    # 接收邮件列表
+    #receivers = ['yinhb@mfhcd.com', ]
+    receivers = ['yinhb@mfhcd.com', 'liutao-yunwei@mfhcd.com','shangxy@mfhcd.com', 'humiao@mfhcd.com']
+    sendmail(subject, attachs, receivers)
+     
+    # 如果定期跑批,则需要清理文件
+    try:
+        for i in os.listdir(BASE_DIR + '/exports/'):
+            print(BASE_DIR + '/exports/' + i)
+            os.remove(BASE_DIR + '/exports/' + i)
+            logging.info("删除导出文件:%{}".format(BASE_DIR + '/exports/' + i)) 
+    except:
+        print("删除导出文件失败")  
+        logging.error("删除导出文件失败")      
 
 
 
