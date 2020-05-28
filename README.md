@@ -1,4 +1,4 @@
-# 根据给出的sql导出mysql数据导csv
+# 根据给出的sql语句导出Oracle或者mysql的数据为csv或excel文件
 
 ## 用法
 
