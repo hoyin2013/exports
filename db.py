@@ -1,6 +1,6 @@
 # coding: utf-8
 # __author__ = 'Hoyin'
-# __date__ = '2020/05/02'
+# __date__ = '2020/06/02'
 # __Desc__ = 从数据库中导出数据到excel数据表中
 
 import os
@@ -20,9 +20,11 @@ def get_data(sql):
     logging.info("get_data")
     try:
         if db_type == 'oracle':
+            logging.info('连接Oracle')
             os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.ZHS16GBK'
             conn = cx_Oracle.connect('sys','Xdjk_dba','10.80.16.50/pospst',mode=cx_Oracle.SYSDBA)
         elif db_type == 'mysql':
+            logging.info('连接MySQL')
             conn = pymysql.connect(**mysql_config)
 
         cursor = conn.cursor()
