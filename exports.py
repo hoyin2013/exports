@@ -22,16 +22,25 @@ BASE_DIR = BASE_DIR.replace('\\', '/')
 
 # print(BASE_DIR)
 
-send_to_email = True
+send_to_email = False
 
 def readfile(filename):
     try:
+        print("read sql file")
         f = open(filename, 'rb')
         data = f.read()
         result = chardet.detect(data)
-        encoding = result['encoding']
-        print("文件：{}，编码为：{}".format(filename ,encoding))
-        logging.info("文件：{}，编码为：{}".format(filename ,encoding))
+
+        data = data.decode(result['encoding'])
+        #data = re.sub('[\r\n]',' ', data)
+
+        # 替换为当前月份分区表
+        #this_month_format = datetime.datetime.now().strftime('%Y_%#m')
+        #data = data.replace('2020_5', this_month_format)
+        #print(data)
+        #exit()
+        print("文件：{}，编码为：{}".format(filename ,result['encoding']))
+        logging.info("文件：{}，编码为：{}".format(filename ,result['encoding']))
         f.close()
         return data
     except Exception as e:
@@ -105,9 +114,6 @@ for fp in sql_files:
     # 解析sql
     sql = readfile(fp)
 
-    # 替换为当前月份分区表
-    this_month_format = datetime.datetime.now().strftime('%Y_%#m')
-    sql = sql.replace('2020_4', this_month_format)
 
     # 保存执行结果
     outputpath = BASE_DIR + '/exports/' + os.path.splitext(os.path.basename(fp))[0]
